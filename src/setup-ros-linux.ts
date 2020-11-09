@@ -114,7 +114,7 @@ export async function runLinux() {
 	await utils.exec("sudo", ["apt-get", "update"]);
 
 	// Install rosdep and vcs, as well as FastRTPS dependencies, OpenSplice, and
-        // optionally RTI Connext.
+      // optionally RTI Connext.
 	// vcs dependencies (e.g. git), as well as base building packages are not pulled by rosdep, so
 	// they are also installed during this stage.
 	await apt.installAptDependencies(include_connext);
