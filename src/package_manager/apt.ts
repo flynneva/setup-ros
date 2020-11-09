@@ -4,12 +4,15 @@ import * as utils from "../utils";
 
 const aptCommandLine: string[] = [
 	"DEBIAN_FRONTEND=noninteractive",
-	"RTI_NC_LICENSE_ACCEPTED=yes",
 	"apt-get",
 	"install",
 	"--no-install-recommends",
 	"--quiet",
 	"--yes",
+];
+
+const aptCommandLineNC: string[] = [
+	"RTI_NC_LICENSE_ACCEPTED=yes",
 ];
 
 const aptDependencies: string[] = [
@@ -30,6 +33,10 @@ const aptDependencies: string[] = [
 	// FastRTPS dependencies
 	"libasio-dev",
 	"libtinyxml2-dev",
+];
+
+// non-commericial (NC) apt dependencies
+const aptDependenciesNC: string[] = [
 	// RTI Connext - required to ensure the installation in non-blocking
 	"rti-connext-dds-5.3.1",
 ];
@@ -71,8 +78,10 @@ const distributionSpecificAptDependencies = {
  * @param   packages        list of Debian pacakges to be installed
  * @returns Promise<number> exit code
  */
-export async function runAptGetInstall(packages: string[]): Promise<number> {
-	return utils.exec("sudo", aptCommandLine.concat(packages));
+export async function runAptGetInstall(packages: string[], includeConnext = false): Promise<number> {
+	return utils.exec("sudo",
+                          includeConnext ? aptCommandLineNC.concat(aptCommandLine.concat(packages))
+                                         : aptCommandLine.concat(packages));
 }
 
 /**
@@ -104,11 +113,12 @@ async function determineDistribCodename(): Promise<string> {
  *
  * @returns Promise<number> exit code
  */
-export async function installAptDependencies(): Promise<number> {
-	let aptPackages: string[] = aptDependencies;
+export async function installAptDependencies(includeConnext = false): Promise<number> {
+	let aptPackages: string[] = includeConnext ?
+                aptDependenciesNC.concat(aptDependencies) : aptDependencies;
 	const distribCodename = await determineDistribCodename();
 	const additionalAptPackages =
 		distributionSpecificAptDependencies[distribCodename] || [];
 	aptPackages = aptPackages.concat(additionalAptPackages);
-	return runAptGetInstall(aptPackages);
+	return runAptGetInstall(aptPackages, includeConnext);
 }

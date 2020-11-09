@@ -1181,6 +1181,7 @@ function runLinux() {
         }
         // Get user input & validate
         var use_ros2_testing = core.getInput('use-ros2-testing') === 'true';
+        var include_connext = core.getInput('include-connext') === 'true';
         yield utils.exec("sudo", ["bash", "-c", "echo 'Etc/UTC' > /etc/timezone"]);
         yield utils.exec("sudo", ["apt-get", "update"]);
         // Install tools required to configure the worker system.
@@ -1214,10 +1215,11 @@ function runLinux() {
             `echo "deb http://packages.ros.org/ros2${use_ros2_testing ? "-testing" : ""}/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros2-latest.list`,
         ]);
         yield utils.exec("sudo", ["apt-get", "update"]);
-        // Install rosdep and vcs, as well as FastRTPS dependencies, OpenSplice, and RTI Connext.
+        // Install rosdep and vcs, as well as FastRTPS dependencies, OpenSplice, and
+        // optionally RTI Connext.
         // vcs dependencies (e.g. git), as well as base building packages are not pulled by rosdep, so
         // they are also installed during this stage.
-        yield apt.installAptDependencies();
+        yield apt.installAptDependencies(include_connext);
         // pip3 dependencies need to be installed after the APT ones, as pip3
         // modules such as cryptography requires python-dev to be installed,
         // because they rely on Python C headers.
@@ -1273,12 +1275,14 @@ const exec = __importStar(__webpack_require__(986));
 const utils = __importStar(__webpack_require__(163));
 const aptCommandLine = [
     "DEBIAN_FRONTEND=noninteractive",
-    "RTI_NC_LICENSE_ACCEPTED=yes",
     "apt-get",
     "install",
     "--no-install-recommends",
     "--quiet",
     "--yes",
+];
+const aptCommandLineNC = [
+    "RTI_NC_LICENSE_ACCEPTED=yes",
 ];
 const aptDependencies = [
     "libssl-dev",
@@ -1298,6 +1302,9 @@ const aptDependencies = [
     // FastRTPS dependencies
     "libasio-dev",
     "libtinyxml2-dev",
+];
+// non-commericial (NC) apt dependencies
+const aptDependenciesNC = [
     // RTI Connext - required to ensure the installation in non-blocking
     "rti-connext-dds-5.3.1",
 ];
@@ -1335,9 +1342,10 @@ const distributionSpecificAptDependencies = {
  * @param   packages        list of Debian pacakges to be installed
  * @returns Promise<number> exit code
  */
-function runAptGetInstall(packages) {
+function runAptGetInstall(packages, includeConnext = false) {
     return __awaiter(this, void 0, void 0, function* () {
-        return utils.exec("sudo", aptCommandLine.concat(packages));
+        return utils.exec("sudo", includeConnext ? aptCommandLineNC.concat(aptCommandLine.concat(packages))
+            : aptCommandLine.concat(packages));
     });
 }
 exports.runAptGetInstall = runAptGetInstall;
@@ -1367,13 +1375,14 @@ function determineDistribCodename() {
  *
  * @returns Promise<number> exit code
  */
-function installAptDependencies() {
+function installAptDependencies(includeConnext = false) {
     return __awaiter(this, void 0, void 0, function* () {
-        let aptPackages = aptDependencies;
+        let aptPackages = includeConnext ?
+            aptDependenciesNC.concat(aptDependencies) : aptDependencies;
         const distribCodename = yield determineDistribCodename();
         const additionalAptPackages = distributionSpecificAptDependencies[distribCodename] || [];
         aptPackages = aptPackages.concat(additionalAptPackages);
-        return runAptGetInstall(aptPackages);
+        return runAptGetInstall(aptPackages, includeConnext);
     });
 }
 exports.installAptDependencies = installAptDependencies;
