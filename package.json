@@ -1,6 +1,6 @@
 {
   "name": "setup-ros",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "GitHub Action to setup a ROS 2 development environment",
   "main": "lib/main.js",
   "scripts": {
@@ -37,8 +37,8 @@
     "husky": "^4.3.0"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.15",
-    "@types/node": "^14.14.9",
+    "@types/jest": "^26.0.16",
+    "@types/node": "^14.14.10",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "@zeit/ncc": "^0.22.3",
@@ -46,7 +46,7 @@
     "husky": "^4.3.0",
     "jest": "^25.5.4",
     "jest-circus": "^26.6.3",
-    "prettier": "^2.2.0",
+    "prettier": "^2.2.1",
     "ts-jest": "^25.5.1",
     "typescript": "^3.9.7"
   },
