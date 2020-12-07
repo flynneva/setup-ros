@@ -2,7 +2,7 @@ import * as exec from "@actions/exec";
 import * as im from "@actions/exec/lib/interfaces";
 import * as utils from "../utils";
 
-export declare const installConnext = false;  // default to not install RTI Connext
+export declare var installConnext = false;  // default to not install RTI Connext
 
 const CONNEXT_APT_PACKAGE_NAME = "rti-connext-dds-5.3.1";  // RTI Connext
 
