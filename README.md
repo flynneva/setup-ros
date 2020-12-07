@@ -153,7 +153,7 @@ build_docker:
 
 ### Including RTI Connext
 
-By default this action will not install RTI Connext as it requires acceptance of a non-commerical license, which should be reviewed by users on their own before accepting the license agreement. To include RTI Connext, simply set the `include-connext` parameter to `true`.
+By default this action will not install RTI Connext as it requires acceptance of a non-commerical license, which should be reviewed by users on their own before accepting the license agreement. To include RTI Connext, simply set the `install-connext` parameter to `true`.
 
 ```yaml
 build_docker:
@@ -163,7 +163,7 @@ build_docker:
   steps:
     - uses: ros-tooling/setup-ros@0.0.25
       with:
-        include-connext: true
+        install-connext: true
         use-ros2-testing: true
         required-ros-distributions: dashing
 ```

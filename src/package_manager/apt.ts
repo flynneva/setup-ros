@@ -2,8 +2,9 @@ import * as exec from "@actions/exec";
 import * as im from "@actions/exec/lib/interfaces";
 import * as utils from "../utils";
 
-let installConnext = false;  // default to not install RTI Connext due to commerical license
-const CONNEXT_API_PACKAGE_NAME = "rti-connext-dds-5.3.1";  // RTI Connext
+let installConnext:boolean = false;  // default to not install RTI Connext due to commerical license
+
+const CONNEXT_APT_PACKAGE_NAME = "rti-connext-dds-5.3.1";  // RTI Connext
 
 const aptCommandLine: string[] = [
 	"DEBIAN_FRONTEND=noninteractive",
