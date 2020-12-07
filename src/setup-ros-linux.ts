@@ -71,7 +71,9 @@ export async function runLinux() {
 
 	// Get user input & validate
 	var use_ros2_testing = core.getInput('use-ros2-testing') === 'true';
-	apt.installConnext = core.getInput('install-connext') === 'true';
+	
+	console.log(apt.installConnext);
+	let apt.installConnext = core.getInput('install-connext') === 'true';
 
 	await utils.exec("sudo", ["bash", "-c", "echo 'Etc/UTC' > /etc/timezone"]);
 	await utils.exec("sudo", ["apt-get", "update"]);
